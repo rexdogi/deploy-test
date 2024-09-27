@@ -33,6 +33,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN chown -R www-data:www-data /var/www
 
+RUN chmod +x /var/www/.docker/php/bin/run.sh
+
 RUN composer install
 
 RUN npm install
