@@ -1,14 +1,9 @@
 FROM nginx:latest
 
-ENV NGINX_ROOT /usr/src/app/public
-ENV NGINX_FPM_HOST localhost
+ENV NGINX_ROOT /var/www/public
+ENV NGINX_FPM_HOST app
 ENV NGINX_FPM_PORT 9000
 
-COPY ./.docker/nginx/fpm-template.conf /etc/nginx/fpm.tmpl
-COPY ./.docker/nginx/bin/entrypoint.sh /usr/local/bin/entrypoint.sh
-
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY ./.docker/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 8081
-
-ENTRYPOINT ["entrypoint.sh"]

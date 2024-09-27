@@ -1,11 +1,10 @@
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
-WORKDIR /usr/src/app
+WORKDIR /var/www
 
-# Install Composer
-ENV COMPOSER_VERSION 2.0.12
+COPY . /var/www
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=$COMPOSER_VERSION
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN apt-get update && apt-get install -y \
         libzip-dev \
@@ -16,6 +15,7 @@ RUN apt-get update && apt-get install -y \
         nodejs \
         npm \
         default-mysql-client \
+        netcat-openbsd \
     && apt-get clean \
     && docker-php-ext-configure zip \
     && docker-php-ext-configure gd \
@@ -31,8 +31,10 @@ RUN apt-get update && apt-get install -y \
         soap \
     && rm -rf /var/lib/apt/lists/*;
 
-RUN chown -R www-data:www-data . /usr/src/app
+RUN chown -R www-data:www-data /var/www
 
-ENTRYPOINT ["/usr/src/app/.docker/php/bin/run.sh"]
+RUN composer install
 
+RUN npm install
 
+ENTRYPOINT ["/var/www/.docker/php/bin/run.sh"]
